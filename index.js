@@ -66,7 +66,11 @@ async function sendEmailToLead(lead) {
     from: `"Ali Nasir" <${process.env.EMAIL_USER}>`,
     to: lead["Email"],
     subject: `Let's build something amazing for your brand`,
-    html: `<p>Hi ${lead["First Name"]}, ...</p>`,
+    html: `<p>
+    Hi ${lead["First Name"]},<br>
+    Use this number if you need any services from pixelforgeagency.org:<br>
+    +92 3117561796
+    </p>`,
   };
 
   try {
