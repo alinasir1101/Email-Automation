@@ -1,0 +1,17 @@
+{
+  "name": "pixelforge-email-automation",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "csv-parser": "^3.2.0",
+    "deta": "^2.0.0",
+    "nodemailer": "^7.0.10"
+  }
+}
