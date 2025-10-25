@@ -12,6 +12,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "cors": "^2.8.5",
     "csv-parser": "^3.2.0",
     "deta": "^2.0.0",
     "dotenv": "^17.2.3",

@@ -4,6 +4,7 @@ import path from 'path';
 import csv from 'csv-parser';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import cors from 'cors';
 dotenv.config();
 
 
@@ -15,6 +16,14 @@ const STATE_FILE = './state.json';    // stores last sent info
 
 
 
+
+
+
+
+app.use(cors({
+    origin: 'https://pixelforgeagency.org'  // allow only your website
+}));
+  
 
 
 
