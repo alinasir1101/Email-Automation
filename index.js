@@ -3,6 +3,9 @@ import fs from 'fs';
 import path from 'path';
 import csv from 'csv-parser';
 import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
+dotenv.config();
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -55,7 +58,9 @@ function saveState(state) {
 // Send email to a lead
 async function sendEmailToLead(lead) {
   const transporter = nodemailer.createTransport({
-    service: 'Zoho',
+    host: "smtp.zoho.com",
+    port: 465,
+    secure: true, // true for 465, false for 587
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
@@ -104,7 +109,8 @@ async function getNextLead() {
   const randomDelay = Math.random() * (maxDelay - minDelay) + minDelay;
 
   if (now - state.lastSentTime < randomDelay) {
-    return null; // Not enough time passed
+    console.log('Not enough time passed');
+    return null; 
   }
 
   // Get CSV files sorted by creation time
@@ -176,7 +182,7 @@ app.get('/send-email', async (req, res) => {
       lastSentTime: Date.now()
     });
 
-    res.send(`Email sent to ${next.lead.email}`);
+    res.send(`Email sent to ${next.lead["Email"]}`);
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
