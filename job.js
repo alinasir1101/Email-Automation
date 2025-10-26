@@ -3,7 +3,7 @@ import path from 'path';
 import csv from 'csv-parser';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
-import { loadState, saveState } from './db';
+import { loadState, saveState } from './db.js';
 dotenv.config();
 
 const DATA_FOLDER = './leads';        // folder containing CSVs
