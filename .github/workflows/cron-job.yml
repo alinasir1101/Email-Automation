@@ -25,20 +25,5 @@ jobs:
       - name: Install dependencies
         run: npm ci
         
-      - name: Debug secrets (safe test)
-        run: |
-            if [ -z "$EMAIL_USER" ]; then
-            echo "❌ EMAIL_USER is missing"
-            else
-            echo "✅ EMAIL_USER is set (value hidden)"
-            fi
-
-            if [ -z "$EMAIL_PASS" ]; then
-            echo "❌ EMAIL_PASS is missing"
-            else
-            echo "✅ EMAIL_PASS is set (value hidden)"
-            fi
-
-
       - name: Run script
         run: node job.js

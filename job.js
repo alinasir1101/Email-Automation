@@ -147,7 +147,7 @@ async function getNextLead() {
 
 // ---------- Random Chance Control ----------
 async function main() {
-  // 5–10% chance to actually run
+  // 5% chance to actually run
   const runChance = Math.random();
   if (runChance > 0.05) {
     console.log(`🕒 Skipping this run (chance=${(runChance * 100).toFixed(1)}%)`);
