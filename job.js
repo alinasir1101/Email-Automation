@@ -149,9 +149,9 @@ async function getNextLead() {
 async function main() {
   // 5–10% chance to actually run
   const runChance = Math.random();
-  if (runChance > 0.1) {
+  if (runChance > 0.05) {
     console.log(`🕒 Skipping this run (chance=${(runChance * 100).toFixed(1)}%)`);
-    // return;
+    return;
   }
 
   console.log('🚀 Running job (chance met)...');
