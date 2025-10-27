@@ -7,7 +7,6 @@ import { loadState, saveState, client } from './db.js';
 dotenv.config();
 
 const DATA_FOLDER = './leads';        // folder containing CSVs
-const STATE_FILE = './state.json';    // stores last sent info
 
 
 
@@ -17,6 +16,7 @@ const STATE_FILE = './state.json';    // stores last sent info
 
 
 // // ---------- State Management ----------
+// const STATE_FILE = './state.json';    // stores last sent info
 // function loadState() {
 //     if (!fs.existsSync(STATE_FILE)) {
 //         return { lastFile: null, lastIndex: -1, lastSentTime: 0 };
@@ -92,7 +92,8 @@ async function sendEmailToLead(lead) {
 async function getNextLead() {
 
     const state = await loadState();
-    const now = Date.now();
+
+    // const now = Date.now();
 
     // Random delay between 1.5–2.5 hours
     // const minDelay = 1.5 * 60 * 60 * 1000;
@@ -155,7 +156,7 @@ async function main() {
     const runChance = Math.random();
     if (runChance > 0.05) {
         console.log(`🕒 Skipping this run (chance=${(runChance * 100).toFixed(1)}%)`);
-        // return;
+        return;
     }
 
     console.log('🚀 Running job (chance met)...');
@@ -166,7 +167,7 @@ async function main() {
         return;
     }
 
-    // await sendEmailToLead(next.lead);
+    await sendEmailToLead(next.lead);
 
     await saveState({
         lastFile: next.file,
