@@ -10,7 +10,7 @@ async function loadState() {
   await client.connect();
   const db = client.db(DB_NAME);
   const state = await db.collection(COLLECTION).findOne({ _id: "stateDoc" });
-  return state || { lastFile: null, lastIndex: -1, lastSentTime: 0 };
+  return state || { lastFile: null, lastIndex: -1, lastSentTime: 0, leadsCount: 0 };
 }
 
 async function saveState(state) {

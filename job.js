@@ -40,51 +40,6 @@ const DATA_FOLDER = './leads';        // folder containing CSVs
 
 
 
-// ---------- Email Sending ----------
-async function sendEmailToLead(lead) {
-
-    const transporter = nodemailer.createTransport({
-        host: "smtp.zoho.com",
-        port: 465,
-        secure: true,
-        auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-        },
-    });
-    
-
-    const mailOptions = {
-        from: `"Ali Nasir" <${process.env.EMAIL_USER}>`,
-        to: lead["Email"],
-        subject: `Let's build something great for ${lead["Company Name"]}!`,
-        html: `<p>
-        Hi ${lead["First Name"]},<br>
-        Use this number if you need any services from <a href="https://pixelforgeagency.org">pixelforgeagency.org</a>:<br>
-        +92 3117561796
-        </p>`,
-    };
-
-    try {
-        await transporter.sendMail(mailOptions);
-        console.log(`✅ Sent to ${lead["Email"]}`);
-    } catch (err) {
-        console.log(`❌ Failed: ${lead["Email"]}`, err.message);
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -133,8 +88,63 @@ async function getNextLead() {
         }
     }
 
-    return { lead: leads[startIndex], file: fileToUse, index: startIndex };
+    return { 
+        lead: leads[startIndex], 
+        file: fileToUse, 
+        index: startIndex, 
+        leadsCount: state.leadsCount + 1
+    };
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ---------- Email Sending ----------
+async function sendEmailToLead(lead) {
+
+    const transporter = nodemailer.createTransport({
+        host: "smtp.zoho.com",
+        port: 465,
+        secure: true,
+        auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+        },
+    });
+    
+
+    const mailOptions = {
+        from: `"Ali Nasir" <${process.env.EMAIL_USER}>`,
+        to: lead["Email"],
+        subject: `Let's build something great for ${lead["Company Name"]}!`,
+        html: `<p>
+        Hi ${lead["First Name"]},<br>
+        Use this number if you need any services from <a href="https://pixelforgeagency.org">pixelforgeagency.org</a>:<br>
+        +92 3117561796
+        </p>`,
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log(`✅ Sent to ${lead["Email"]}`);
+    } catch (err) {
+        console.log(`❌ Failed: ${lead["Email"]}`, err.message);
+    }
+}
+
+
+
 
 
 
@@ -172,7 +182,8 @@ async function main() {
     await saveState({
         lastFile: next.file,
         lastIndex: next.index,
-        lastSentTime: Date.now()
+        lastSentTime: Date.now(),
+        leadsCount: next.leadsCount
     });
 
     console.log(`📧 Email sent to ${next.lead["Email"]}`);
