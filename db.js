@@ -22,4 +22,4 @@ async function saveState(state) {
   );
 }
 
-export { loadState, saveState };
+export { loadState, saveState, client };
