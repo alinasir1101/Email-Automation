@@ -90,18 +90,19 @@ async function sendEmailToLead(lead) {
 
 // ---------- Lead Selection ----------
 async function getNextLead() {
-    const state = loadState();
+
+    const state = await loadState();
     const now = Date.now();
 
     // Random delay between 1.5–2.5 hours
-    const minDelay = 1.5 * 60 * 60 * 1000;
-    const maxDelay = 2.5 * 60 * 60 * 1000;
-    const randomDelay = Math.random() * (maxDelay - minDelay) + minDelay;
+    // const minDelay = 1.5 * 60 * 60 * 1000;
+    // const maxDelay = 2.5 * 60 * 60 * 1000;
+    // const randomDelay = Math.random() * (maxDelay - minDelay) + minDelay;
 
-    if (now - state.lastSentTime < randomDelay) {
-        console.log('⏳ Not enough time passed');
-        return null;
-    }
+    // if (now - state.lastSentTime < randomDelay) {
+    //     console.log('⏳ Not enough time passed');
+    //     return null;
+    // }
 
     const files = fs.readdirSync(DATA_FOLDER)
         .filter(f => f.endsWith('.csv'))
@@ -165,9 +166,9 @@ async function main() {
         return;
     }
 
-    await sendEmailToLead(next.lead);
+    // await sendEmailToLead(next.lead);
 
-    saveState({
+    await saveState({
         lastFile: next.file,
         lastIndex: next.index,
         lastSentTime: Date.now()
