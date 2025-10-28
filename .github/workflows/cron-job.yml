@@ -1,15 +1,15 @@
 name: Email Automation Cron Job
 
 on:
-  schedule:
-    - cron: "*/10 * * * *"  # every 10 minutes
+  # schedule:
+    # - cron: "*/10 * * * *"  # every 10 minutes
   workflow_dispatch:        # allows manual trigger from Actions tab
 
 jobs:
   run-email-job:
     runs-on: ubuntu-latest
 
-    env:                       # 👇 add this section
+    env:                       
       EMAIL_USER: ${{ secrets.EMAIL_USER }}
       EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
       MONGO_URI: ${{ secrets.MONGO_URI }}
