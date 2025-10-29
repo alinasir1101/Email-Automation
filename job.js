@@ -124,16 +124,58 @@ async function sendEmailToLead(lead) {
     });
     
 
+    // const mailOptions = {
+    //     from: `"Ali Nasir" <${process.env.EMAIL_USER}>`,
+    //     to: lead["Email"],
+    //     subject: `Let's build something great for ${lead["Company Name"]}!`,
+    //     html: `<p>
+    //     Hi ${lead["First Name"]},<br>
+    //     Use this number if you need any services from <a href="https://pixelforgeagency.org">pixelforgeagency.org</a>:<br>
+    //     +92 3117561796
+    //     </p>`,
+    // };
+
+
     const mailOptions = {
         from: `"Ali Nasir" <${process.env.EMAIL_USER}>`,
         to: lead["Email"],
-        subject: `Let's build something great for ${lead["Company Name"]}!`,
-        html: `<p>
-        Hi ${lead["First Name"]},<br>
-        Use this number if you need any services from <a href="https://pixelforgeagency.org">pixelforgeagency.org</a>:<br>
-        +92 3117561796
-        </p>`,
+        subject: `Let's elevate ${lead["Company Name"]}'s digital presence`,
+        html: `
+        <div style="font-family: Arial, sans-serif; color: #1a1a1a; line-height: 1.6; font-size: 15px;">
+            <p>Hi ${lead["First Name"]},</p>
+        
+            <p>
+                I noticed ${lead["Company Name"]} is doing great work${lead["Industry"] ? ` in the ${lead["Industry"].toLowerCase()} space` : ""}.
+                At <a href="https://pixelforgeagency.org" style="color: #0066cc; text-decoration: none;">PixelForge</a>, we help businesses like yours 
+                stand out online through modern <strong>UI/UX design</strong>, high-performance <strong>web & mobile development</strong>, 
+                and reliable <strong>backend systems</strong>.
+            </p>
+        
+            <p>
+                Would you be open to seeing a few quick ideas on how we could improve your website or app experience for ${lead["Company Name"]}?  
+                (No cost or commitment — just a quick look.)
+            </p>
+        
+            <p>
+                You can reply here or visit  
+                <a href="https://pixelforgeagency.org" style="color: #0066cc; text-decoration: none;">pixelforgeagency.org</a>  
+                to view some of our work.
+            </p>
+        
+            <p>— Ali Nasir<br>
+            Founder, <a href="https://pixelforgeagency.org" style="color: #0066cc; text-decoration: none;">PixelForge</a><br>
+            Chat or email only — no calls<br>
+            <span style="color: #555;">+92 3117561796</span></p>
+        
+            <hr style="border:none; border-top:1px solid #eee; margin-top:20px;">
+            <p style="font-size:12px; color:#888;">
+                Sent to ${lead["Email"]} for ${lead["Company Name"]}.  
+                If not relevant, you can simply ignore this email.
+            </p>
+        </div>
+        `
     };
+      
 
     try {
         await transporter.sendMail(mailOptions);
