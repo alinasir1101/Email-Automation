@@ -1,8 +1,8 @@
 name: Email Automation Cron Job
 
 on:
-  # schedule:
-    # - cron: "*/10 * * * *"  # every 10 minutes
+  schedule:
+    - cron: "*/10 * * * *"  # every 10 minutes
   workflow_dispatch:        # allows manual trigger from Actions tab
 
 jobs:
