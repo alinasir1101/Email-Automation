@@ -41,31 +41,42 @@ const DATA_FOLDER = './leads';        // folder containing CSVs
 
 
 
-
 // ---------- Lead Selection ----------
 async function getNextLead() {
     const state = await loadState(); // load from MongoDB
 
-    // Get CSV files ordered by creation time (oldest first)
+    // ---------- File Ordering Rules ----------
+    // apollo-contacts-export.csv       → first
+    // apollo-contacts-export (1).csv   → second
+    // apollo-contacts-export (2).csv   → third
+    function fileOrder(filename) {
+        const base = "apollo-contacts-export.csv";
+        if (filename === base) return 0;
+        const match = filename.match(/\((\d+)\)\.csv$/);
+        if (match) return parseInt(match[1]);
+
+        // unexpected naming goes last
+        return Infinity;
+    }
+
+    // Load all CSV filenames, sort using our custom ordering
     const files = fs.readdirSync(DATA_FOLDER)
-        .filter(f => f.endsWith('.csv'))
-        .sort((a, b) =>
-            fs.statSync(path.join(DATA_FOLDER, a)).birthtimeMs -
-            fs.statSync(path.join(DATA_FOLDER, b)).birthtimeMs
-        );
+        .filter(f => f.endsWith(".csv"))
+        .sort((a, b) => fileOrder(a) - fileOrder(b));
 
     if (files.length === 0) return null;
 
-    // Determine which file to use
+    // Pick file to use based on last saved state
     let fileToUse =
         state.lastFile && files.includes(state.lastFile)
             ? state.lastFile
             : files[0];
 
+    // If same file, move to next index. If new file, start at 0.
     let startIndex =
         state.lastFile === fileToUse ? state.lastIndex + 1 : 0;
 
-    // Helper to load CSV leads
+    // Helper to load CSV rows
     async function loadCSV(file) {
         const rows = [];
         await new Promise((resolve, reject) => {
@@ -78,30 +89,30 @@ async function getNextLead() {
         return rows;
     }
 
-    // Load leads of the selected file
+    // Load leads in the current file
     let leads = await loadCSV(fileToUse);
 
-    // If the file is exhausted, move to next file
+    // ---------- If file is finished, move to next file ----------
     while (startIndex >= leads.length) {
         const idx = files.indexOf(fileToUse);
 
-        // No more files left → done
+        // no more files left → nothing to send
         if (idx + 1 >= files.length) return null;
 
-        // Switch to next file
+        // switch to next file and reload
         fileToUse = files[idx + 1];
         startIndex = 0;
-        leads = await loadCSV(fileToUse); // reload leads of new file
+        leads = await loadCSV(fileToUse);
     }
 
+    // ---------- Return next lead ----------
     return {
         lead: leads[startIndex],
         file: fileToUse,
         index: startIndex,
-        leadsCount: (state.leadsCount || 0) + 1
+        leadsCount: (state.leadsCount || 0) + 1,
     };
 }
-
 
 
 
