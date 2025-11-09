@@ -42,60 +42,65 @@ const DATA_FOLDER = './leads';        // folder containing CSVs
 
 
 
-
 // ---------- Lead Selection ----------
 async function getNextLead() {
+    const state = await loadState(); // load from MongoDB
 
-    const state = await loadState();
-
-    // const now = Date.now();
-
-    // Random delay between 1.5–2.5 hours
-    // const minDelay = 1.5 * 60 * 60 * 1000;
-    // const maxDelay = 2.5 * 60 * 60 * 1000;
-    // const randomDelay = Math.random() * (maxDelay - minDelay) + minDelay;
-
-    // if (now - state.lastSentTime < randomDelay) {
-    //     console.log('⏳ Not enough time passed');
-    //     return null;
-    // }
-
+    // Get CSV files ordered by creation time (oldest first)
     const files = fs.readdirSync(DATA_FOLDER)
         .filter(f => f.endsWith('.csv'))
-        .sort((a, b) => fs.statSync(path.join(DATA_FOLDER, a)).birthtimeMs - fs.statSync(path.join(DATA_FOLDER, b)).birthtimeMs);
+        .sort((a, b) =>
+            fs.statSync(path.join(DATA_FOLDER, a)).birthtimeMs -
+            fs.statSync(path.join(DATA_FOLDER, b)).birthtimeMs
+        );
 
     if (files.length === 0) return null;
 
-    let fileToUse = state.lastFile && files.includes(state.lastFile) ? state.lastFile : files[0];
-    let startIndex = (state.lastFile === fileToUse) ? state.lastIndex + 1 : 0;
+    // Determine which file to use
+    let fileToUse =
+        state.lastFile && files.includes(state.lastFile)
+            ? state.lastFile
+            : files[0];
 
-    const leads = [];
-    await new Promise((resolve, reject) => {
-        fs.createReadStream(path.join(DATA_FOLDER, fileToUse))
-        .pipe(csv())
-        .on('data', (data) => leads.push(data))
-        .on('end', resolve)
-        .on('error', reject);
-    });
+    let startIndex =
+        state.lastFile === fileToUse ? state.lastIndex + 1 : 0;
 
-    if (startIndex >= leads.length) {
-        const idx = files.indexOf(fileToUse);
-        if (idx + 1 < files.length) {
-        fileToUse = files[idx + 1];
-        startIndex = 0;
-        } else {
-        return null;
-        }
+    // Helper to load CSV leads
+    async function loadCSV(file) {
+        const rows = [];
+        await new Promise((resolve, reject) => {
+            fs.createReadStream(path.join(DATA_FOLDER, file))
+                .pipe(csv())
+                .on("data", (data) => rows.push(data))
+                .on("end", resolve)
+                .on("error", reject);
+        });
+        return rows;
     }
 
-    return { 
-        lead: leads[startIndex], 
-        file: fileToUse, 
-        index: startIndex, 
-        leadsCount: state.leadsCount + 1
+    // Load leads of the selected file
+    let leads = await loadCSV(fileToUse);
+
+    // If the file is exhausted, move to next file
+    while (startIndex >= leads.length) {
+        const idx = files.indexOf(fileToUse);
+
+        // No more files left → done
+        if (idx + 1 >= files.length) return null;
+
+        // Switch to next file
+        fileToUse = files[idx + 1];
+        startIndex = 0;
+        leads = await loadCSV(fileToUse); // reload leads of new file
+    }
+
+    return {
+        lead: leads[startIndex],
+        file: fileToUse,
+        index: startIndex,
+        leadsCount: (state.leadsCount || 0) + 1
     };
 }
-
 
 
 
