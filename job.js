@@ -222,7 +222,7 @@ async function sendEmailToLead(lead) {
 async function main() {
     // 5% chance to actually run
     const runChance = Math.random();
-    if (runChance > 0.05) {
+    if (runChance > 0.1) {
         console.log(`🕒 Skipping this run (chance=${(runChance * 100).toFixed(1)}%)`);
         return;
     }
